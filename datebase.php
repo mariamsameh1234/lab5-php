@@ -1,29 +1,24 @@
 <?php
 class Database {
     private $pdo;
-    public function __construct(DatabaseConfig $config) {
+
+    public function __construct($host, $user, $pass, $dbname) {
         try {
-            $this->pdo = new PDO(
-                $config->getDsn(),
-                $config->getUser(),
-                $config->getPass(),
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false
-                ]
-            );
+            $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+            $this->pdo = new PDO($dsn, $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]);
         } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+            die("Database connection failed: " . $e->getMessage());
         }
     }
 
-    
     public function getConnection() {
         return $this->pdo;
     }
 
-    /
+    
     public function insert($table, $columns, $values) {
         $colNames = implode(", ", $columns);
         $placeholders = implode(", ", array_fill(0, count($values), "?"));
@@ -32,13 +27,13 @@ class Database {
         return $stmt->execute($values);
     }
 
-    
+ 
     public function selectAll($table) {
         $stmt = $this->pdo->query("SELECT * FROM $table");
         return $stmt->fetchAll();
     }
 
-
+  
     public function select($table, $columns, $condition = "", $params = []) {
         $colNames = implode(", ", $columns);
         $sql = "SELECT $colNames FROM $table";
@@ -50,7 +45,7 @@ class Database {
         return $stmt->fetchAll();
     }
 
-   
+ 
     public function update($table, $columns, $values, $condition) {
         if (count($values) == count($columns)) {
             $setClause = implode(" = ?, ", $columns) . " = ?";
@@ -63,16 +58,11 @@ class Database {
         }
     }
 
+   
     public function delete($table, $condition, $params = []) {
         $sql = "DELETE FROM $table WHERE $condition";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute($params);
     }
 }
-?>
-
-
-
-
-
-
+?> 
