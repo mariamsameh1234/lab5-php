@@ -1,3 +1,5 @@
+<?php
+
 session_start();
 include 'database.php';
 
@@ -12,4 +14,4 @@ if (isset($_GET['id'])) {
 
 header("Location: display_users.php");
 exit();
-
+?>
