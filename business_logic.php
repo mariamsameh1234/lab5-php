@@ -1,26 +1,41 @@
 
 <?php
-include_once 'database.php';
+require_once 'database.php';
 
-function insert_user($pdo, $name, $email, $password, $room_id, $ext, $profile_picture) {
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    return insert($pdo, "user", ["name", "email", "password", "room_id", "ext", "profile_picture"], [$name, $email, $hashed_password, $room_id, $ext, $profile_picture]);
-}
+class User {
+    private Database $db;
 
-function get_all_rooms($pdo) {
-    return selectAll($pdo, "rooms");
-}
+    public function __construct(Database $db) {
+        $this->db = $db;
+    }
 
-function get_all_users($pdo) {
-    return select($pdo, "user LEFT JOIN rooms ON user.room_id = rooms.id", ["user.*", "rooms.name AS room_name"], "", []);
-}
+   
+    public function insert($name, $email, $password, $room_id, $ext, $profile_picture) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        return $this->db->insert("user", ["name", "email", "password", "room_id", "ext", "profile_picture"], 
+            [$name, $email, $hashed_password, $room_id, $ext, $profile_picture]);
+    }
 
-function update_user($pdo, $id, $name, $email, $room_id, $ext) {
-    return update($pdo, "user", ["name", "email", "room_id", "ext"], [$name, $email, $room_id, $ext, $id], "id = ?");
-}
+ 
+    public function getAllRooms() {
+        return $this->db->selectAll("rooms");
+    }
 
-function delete_user($pdo, $id) {
-    return delete($pdo, "user", "id = ?", [$id]);
+
+    public function getAll() {
+        return $this->db->select("user LEFT JOIN rooms ON user.room_id = rooms.id", 
+            ["user.*", "rooms.name AS room_name"]);
+    }
+
+   
+    public function update($id, $name, $email, $room_id, $ext) {
+        return $this->db->update("user", ["name", "email", "room_id", "ext"], 
+            [$name, $email, $room_id, $ext, $id], "id = ?");
+    }
+
+   
+    public function delete($id) {
+        return $this->db->delete("user", "id = ?", [$id]);
+    }
 }
 ?>
-
