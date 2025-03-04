@@ -1,11 +1,11 @@
 <?php
-class Database {
+ final class DatabaseConfig{
     private $host;
     private $user;
     private $pass;
     private $dbname;
 
-    public function __construct($host, $user, $pass, $dbname) {
+    public function __construct($host, $user, $pass, $dbname, $charset = "utf8mb4") {
         $this->host = $host;
         $this->user = $user;
         $this->pass = $pass;
@@ -13,7 +13,7 @@ class Database {
     }
 
     public function getDatabase() {
-        return "mysql:host=$this->host;dbname=$this->dbname";
+        return "mysql:host=$this->host;dbname=$this->dbname;charset={$this->charset";
     }
 
     public function getUser() {
