@@ -4,7 +4,7 @@ final class DatabaseConfig {
     private $user;
     private $pass;
     private $dbname;
-    private $charset;
+    
 
     public function __construct($host, $user, $pass, $dbname, $charset = "utf8mb4") {
         $this->host = $host;
