@@ -1,15 +1,26 @@
 <?php
 include_once 'config.php';
+class Database {
+    private $pdo;
+    private $Config;
+    public function __construct(DatabaseConfig $config) {
+        try {
+            $this->pdo = new PDO(
+                $config->getDsn(),
+                $config->getUser(),
+                $config->getPass(),
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false
+                ]
+            );
+        } catch (PDOException $e) {
+            die(" Connection failed: " . $e->getMessage());
+        }
+    }
 
-try {
-    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false
-    ]);
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
-}
+
 
 
 function insert($pdo, $table, $columns, $values) {
