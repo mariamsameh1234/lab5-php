@@ -27,51 +27,57 @@ class Database {
         return $this->pdo;
     }
 }
-?>
 
 
 
+  public function insert($table, $columns, $values) {
+        $colNames = implode(", ", $columns);
+        $placeholders = implode(", ", array_fill(0, count($values), "?"));
+        $sql = "INSERT INTO $table ($colNames) VALUES ($placeholders)";
 
-function insert($pdo, $table, $columns, $values) {
-    $colNames = implode(", ", $columns);
-    $placeholders = implode(", ", array_fill(0, count($values), "?"));
-    $sql = "INSERT INTO $table ($colNames) VALUES ($placeholders)";
-    $stmt = $pdo->prepare($sql);
-    return $stmt->execute($values);
-}
-
-function selectAll($pdo, $table) {
-    $stmt = $pdo->query("SELECT * FROM $table");
-    return $stmt->fetchAll();
-}
-
-function select($pdo, $table, $columns, $condition = "", $params = []) {
-    $colNames = implode(", ", $columns);
-    $sql = "SELECT $colNames FROM $table";
-    if (!empty($condition)) {
-        $sql .= " WHERE $condition";
-    }
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll();
-}
-
-function update($pdo, $table, $columns, $values, $condition) {
-    if (count($values) == count($columns)) {
-        $setClause = implode(" = ?, ", $columns) . " = ?";
-        $sql = "UPDATE $table SET $setClause WHERE $condition";
-        $stmt = $pdo->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         return $stmt->execute($values);
-    } else {
-        echo "Columns and values count mismatch.<br>";
-        return false;
     }
-}
+   public function selectAll($table) {
+        $stmt = $this->pdo->query("SELECT * FROM $table");
+        return $stmt->fetchAll();
+    }
 
-function delete($pdo, $table, $condition, $params = []) {
-    $sql = "DELETE FROM $table WHERE $condition";
-    $stmt = $pdo->prepare($sql);
-    return $stmt->execute($params);
-}
+
+
+ public function select($table, $columns, $condition = "", $params = []) {
+        $colNames = implode(", ", $columns);
+        $sql = "SELECT $colNames FROM $table";
+        if (!empty($condition)) {
+            $sql .= " WHERE $condition";
+        }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+   
+    public function update($table, $columns, $values, $condition) {
+        if (count($values) == count($columns)) {
+            $setClause = implode(" = ?, ", $columns) . " = ?";
+            $sql = "UPDATE $table SET $setClause WHERE $condition";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute($values);
+        } else {
+            echo "Columns and values count mismatch.<br>";
+            return false;
+        }
+    }
+    public function delete($table, $condition, $params = []) {
+        $sql = "DELETE FROM $table WHERE $condition";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params);
+    }
+
 ?>
+
+
+
+
+
 
