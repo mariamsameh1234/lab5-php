@@ -20,7 +20,7 @@ if (!isset($_GET['id']) && !isset($_POST['id'])) {
 }
 
 $id = $_GET['id'] ?? $_POST['id']; 
-$user = $userdb->getAll();
+$user = $userdb->get_user($id); 
 if (!$user) {
     die(" User not found.");
 }
