@@ -3,7 +3,7 @@ session_start();
 include 'database.php';
 
 
-$config = new Config('localhost', 'root', 'rootroot', 'php');
+$config = new DatabaseConfig ('localhost', 'root', '123456', 'caffe');
 $db = new Database($config);
 $userObj = new User($db);
 
