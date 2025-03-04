@@ -1,43 +1,100 @@
+<header>
+    <link rel="stylesheet" href="style.css">
+</header>
 <?php
 session_start();
-include 'datebase.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-if (!isset($_GET['id'])) {
-    die("User ID is required!");
+include 'config.php';
+include_once 'datebase.php';
+include 'business_logic.php';
+
+$config = new DatabaseConfig('localhost', 'root', '123456', 'caffe');
+$db = new Database($config);
+$userdb = new User($db);
+
+
+if (!isset($_GET['id']) && !isset($_POST['id'])) {
+    die(" User ID is required.");
 }
 
-$id = $_GET['id'];
-$user = select($pdo, "user", ["id", "name", "email", "room_id", "ext"], "id = ?", [$id])[0];
+$id = $_GET['id'] ?? $_POST['id']; 
+$user = $userdb->getAll();
+if (!$user) {
+    die(" User not found.");
+}
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $room_id = $_POST['room_id'];
-    $ext = trim($_POST['ext']);
+$user = $user[0];
+$rooms = $userdb->getAllRooms(); 
 
-    if (update_user($pdo, $id, $name, $email, $room_id, $ext)) {
-        header("Location: display_users.php");
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $id = $_POST['id'] ?? null;
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $room_id = $_POST['room_id'] ?? '';
+    $ext = $_POST['ext'] ?? '';
+
+   
+    if (empty($id) || empty($name) || empty($email) || empty($room_id)) {
+        die("<p style='color:red;'> Please fill in all required fields.</p>");
+    }
+
+   
+    $updated = update_user($pdo, $id, $name, $email, $room_id, $ext);
+
+    if ($updated) {
+        
+        header("Location: display_users.php?success=User updated successfully");
         exit();
     } else {
-        echo "Error updating user.";
+        echo "<p style='color:red;'> Failed to update user. Please try again.</p>";
     }
 }
 ?>
 
-<form method="post">
-    <input type="text" name="name" value="<?= $user['name'] ?>" required>
-    <input type="email" name="email" value="<?= $user['email'] ?>" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Update User</title>
+</head>
+<body>
+<h2>Update User</h2>
+
+
+<?php if (isset($_GET['success'])) : ?>
+    <p style="color:green;"><?= htmlspecialchars($_GET['success']) ?></p>
+<?php elseif (isset($_GET['error'])) : ?>
+    <p style="color:red;"><?= htmlspecialchars($_GET['error']) ?></p>
+<?php endif; ?>
+
+<form action="update_user.php" method="POST">
+   
+    <input type="hidden" name="id" value="<?= htmlspecialchars($id) ?>">
+
+    <label>Name:</label>
+    <input type="text" name="name" value="<?= htmlspecialchars($user['name']) ?>" required>
+
+    <label>Email:</label>
+    <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+
+    <label>Room:</label>
     <select name="room_id" required>
-        <option value="">Select Room</option>
-        <?php
-        $rooms = get_all_rooms($pdo);
-        foreach ($rooms as $room) {
-            $selected = ($room['id'] == $user['room_id']) ? "selected" : "";
-            echo "<option value='{$room['id']}' $selected>{$room['name']}</option>";
-        }
-        ?>
+        <?php foreach ($rooms as $room) : ?>
+            <option value="<?= $room['id'] ?>" <?= ($room['id'] == $user['room_id']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($room['name']) ?>
+            </option>
+        <?php endforeach; ?>
     </select>
-    <input type="text" name="ext" value="<?= $user['ext'] ?>">
-    <button type="submit">Update</button>
+
+    <label>Ext:</label>
+    <input type="text" name="ext" value="<?= htmlspecialchars($user['ext']) ?>">
+
+    <button type="submit" name="update">Update</button>
 </form>
 
+<a href="display_users.php">Back to Users</a>
+
+</body>
+</html>
