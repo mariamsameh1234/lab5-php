@@ -6,12 +6,12 @@ final class DatabaseConfig {
     private $dbname;
     
 
-    public function __construct($host, $user, $pass, $dbname, $charset = "utf8mb4") {
+    public function __construct($host, $user, $pass, $dbname) {
         $this->host = $host;
         $this->user = $user;
         $this->pass = $pass;
         $this->dbname = $dbname;
-        $this->charset = $charset;
+        
     }
 
     public function getDsn() {
