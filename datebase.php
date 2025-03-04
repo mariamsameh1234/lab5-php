@@ -1,9 +1,12 @@
 <?php
 include_once 'config.php';
+
 class Database {
     private $pdo;
-    private $Config;
+    private $config;
+
     public function __construct(DatabaseConfig $config) {
+        $this->config = $config; 
         try {
             $this->pdo = new PDO(
                 $config->getDsn(),
@@ -16,9 +19,15 @@ class Database {
                 ]
             );
         } catch (PDOException $e) {
-            die(" Connection failed: " . $e->getMessage());
+            die("Connection failed: " . $e->getMessage());
         }
     }
+
+    public function getConnection() {
+        return $this->pdo;
+    }
+}
+?>
 
 
 
