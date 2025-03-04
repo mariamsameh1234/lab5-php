@@ -11,10 +11,10 @@ final class DatabaseConfig {
         $this->user = $user;
         $this->pass = $pass;
         $this->dbname = $dbname;
-        $this->charset = $charset; 
+        $this->charset = $charset;
     }
 
-    public function getDsn() { 
+    public function getDsn() {
         return "mysql:host=$this->host;dbname=$this->dbname;charset=$this->charset";
     }
 
@@ -27,6 +27,3 @@ final class DatabaseConfig {
     }
 }
 ?>
-
-
-
