@@ -1,16 +1,31 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+class Database {
+    private $host;
+    private $user;
+    private $pass;
+    private $dbname;
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '123456');
-define('DB_NAME', 'caffe');
+    public function __construct($host, $user, $pass, $dbname) {
+        $this->host = $host;
+        $this->user = $user;
+        $this->pass = $pass;
+        $this->dbname = $dbname;
+    }
 
+    public function getDatabase() {
+        return "mysql:host=$this->host;dbname=$this->dbname";
+    }
+
+    public function getUser() {
+        return $this->user;
+    }
+
+    public function getPass() {
+        return $this->pass;
+    }
+}
 
 ?>
-
-
 
 
 
