@@ -5,7 +5,7 @@ include 'database.php';
 
 $config = new DatabaseConfig ('localhost', 'root', '123456', 'caffe');
 $db = new Database($config);
-$userObj = new User($db);
+$userdb = new User($db);
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
