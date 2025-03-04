@@ -1,12 +1,9 @@
 <?php
-include_once 'config.php';
+require_once 'config.php';
 
 class Database {
     private $pdo;
-    private $config;
-
     public function __construct(DatabaseConfig $config) {
-        $this->config = $config; 
         try {
             $this->pdo = new PDO(
                 $config->getDsn(),
@@ -23,29 +20,28 @@ class Database {
         }
     }
 
+    
     public function getConnection() {
         return $this->pdo;
     }
-}
 
-
-
-  public function insert($table, $columns, $values) {
+    /
+    public function insert($table, $columns, $values) {
         $colNames = implode(", ", $columns);
         $placeholders = implode(", ", array_fill(0, count($values), "?"));
         $sql = "INSERT INTO $table ($colNames) VALUES ($placeholders)";
-
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute($values);
     }
-   public function selectAll($table) {
+
+    
+    public function selectAll($table) {
         $stmt = $this->pdo->query("SELECT * FROM $table");
         return $stmt->fetchAll();
     }
 
 
-
- public function select($table, $columns, $condition = "", $params = []) {
+    public function select($table, $columns, $condition = "", $params = []) {
         $colNames = implode(", ", $columns);
         $sql = "SELECT $colNames FROM $table";
         if (!empty($condition)) {
@@ -68,12 +64,13 @@ class Database {
             return false;
         }
     }
+
     public function delete($table, $condition, $params = []) {
         $sql = "DELETE FROM $table WHERE $condition";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute($params);
     }
-
+}
 ?>
 
 
