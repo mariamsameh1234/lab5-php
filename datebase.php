@@ -1,6 +1,4 @@
 <?php
-require_once 'config.php';
-
 class Database {
     private $pdo;
     public function __construct(DatabaseConfig $config) {
