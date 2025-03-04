@@ -15,7 +15,7 @@ final class DatabaseConfig {
     }
 
     public function getDsn() {
-        return "mysql:host=$this->host;dbname=$this->dbname;charset=$this->charset";
+        return "mysql:host=$this->host;dbname=$this->dbname";
     }
 
     public function getUser() {
