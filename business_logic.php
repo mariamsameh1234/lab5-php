@@ -1,9 +1,9 @@
+
 <?php
-
 class User {
-    private Database $db;
+    private $db;
 
-    public function __construct(Database $db) {
+    public function __construct($db) {
         $this->db = $db;
     }
 
@@ -18,25 +18,23 @@ class User {
     }
 
     public function getAll() {
-        return $this->db->select("users LEFT JOIN rooms ON users.room_id = rooms.id", 
-            ["users.*", "rooms.name AS room_name"]);
+        return $this->db->select(
+            "users LEFT JOIN rooms ON users.room_id = rooms.id", 
+            ["users.id", "users.name", "users.email", "rooms.name AS room_name"]
+        );
     }
 
-    
+    public function getUserById($id) {
+        $sql = "SELECT * FROM users WHERE id = ?";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function update($id, $name, $email, $room_id, $ext) {
-        try {
-            $sql = "UPDATE users SET name = :name, email = :email, room_id = :room_id, ext = :ext WHERE id = :id";
-            $stmt = $this->db->pdo->prepare($sql);
-            return $stmt->execute([
-                ':name' => $name,
-                ':email' => $email,
-                ':room_id' => $room_id,
-                ':ext' => $ext,
-                ':id' => $id
-            ]);
-        } catch (PDOException $e) {
-            die("Error updating user: " . $e->getMessage());
-        }
+        $sql = "UPDATE users SET name = ?, email = ?, room_id = ?, ext = ? WHERE id = ?";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        return $stmt->execute([$name, $email, $room_id, $ext, $id]);
     }
 
     public function delete($id) {
