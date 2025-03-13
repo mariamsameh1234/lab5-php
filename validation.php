@@ -6,9 +6,9 @@ ini_set('display_errors', 1);
 include 'config.php';
 include 'datebase.php';
 
-// إنشاء كائن قاعدة البيانات واستدعاء الاتصال بـ PDO
+
 $db = new Database(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-$pdo = $db->getConnection(); // ✅ الحل الصحيح
+$pdo = $db->getConnection(); 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST['name']);
